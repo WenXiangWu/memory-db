@@ -6,5 +6,10 @@ package com.reign.memorydb;
  * @Author: wuwx
  * @Date: 2021-04-01 16:03
  **/
-public class AsyncOp {
+public enum  AsyncOp {
+    UPDATE,
+    INSERT,
+    SELECT,
+    DELETE
+
 }

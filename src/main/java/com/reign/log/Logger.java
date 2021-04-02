@@ -1,4 +1,4 @@
-package com.reign.memorydb;
+package com.reign.log;
 
 /**
  * @ClassName: Logger
@@ -31,4 +31,6 @@ public interface Logger {
 
     //获取错误的原始原因
     Throwable getOriginThtowable(Throwable t);
+
+    void debug(String toString);
 }

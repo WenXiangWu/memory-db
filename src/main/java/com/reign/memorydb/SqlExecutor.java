@@ -1,5 +1,7 @@
 package com.reign.memorydb;
 
+import com.reign.log.Logger;
+
 import javax.naming.CommunicationException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -7,7 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,7 +28,7 @@ public class SqlExecutor {
     //batchSize
     private final int batchSize;
 
-    private final AsyncDbExecutor executor;
+    private final AsyncDBExecutor executor;
 
     //SQL队列
     private final BlockingQueue<SQLEntry> sqlQueue;
@@ -53,7 +54,7 @@ public class SqlExecutor {
     private final Logger log;
 
 
-    public SqlExecutor(AsyncDbExecutor executor, int batchSize, long connCheckInterval) {
+    public SqlExecutor(AsyncDBExecutor executor, int batchSize, long connCheckInterval) {
         super();
         this.connCheckInterval = connCheckInterval;
         this.batchSize = batchSize;
@@ -61,7 +62,7 @@ public class SqlExecutor {
         this.sqlQueue = new LinkedBlockingQueue<>();
         this.retryList = new ArrayList<>();
         this.flushFlag = new AtomicInteger(0);
-        this.log = AsyncDbExecutor.log;
+        this.log = AsyncDBExecutor.log;
     }
 
     /**

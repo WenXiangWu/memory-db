@@ -1,5 +1,7 @@
 package com.reign.memorydb;
 
+import com.reign.log.Logger;
+
 /**
  * @ClassName: InternalLoggerFactory
  * @Description: 日志工厂

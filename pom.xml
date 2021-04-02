@@ -7,6 +7,19 @@
     <groupId>com.fastdb</groupId>
     <artifactId>memory-db</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>4.0.8.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.0</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

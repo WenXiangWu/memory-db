@@ -1,5 +1,7 @@
 package com.reign.memorydb;
 
+import com.reign.jdbc.orm.JdbcEntity;
+
 /**
  * @ClassName: SQLEntry
  * @Description: sql实体

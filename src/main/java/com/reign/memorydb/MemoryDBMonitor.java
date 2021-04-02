@@ -1,6 +1,8 @@
 package com.reign.memorydb;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -68,14 +70,14 @@ public class MemoryDBMonitor {
             System.out.println("async db queue size is " + sqlQueueSize + "  is higher than threshold " + SQL_QUEUESIZE_HIGH_THRESHOLD);
             return;
 
-        }else if (firstWarnTime>0){
+        } else if (firstWarnTime > 0) {
             //低于报警值
             firstWarnTime = 0;
         }
 
-        if (!isHealth&&MemoryDBMonitor.sqlQueueSize<=SQL_QUEUESIZE_LOW_THRESHOLD){
+        if (!isHealth && MemoryDBMonitor.sqlQueueSize <= SQL_QUEUESIZE_LOW_THRESHOLD) {
             isHealth = true;
-            firstWarnTime =0;
+            firstWarnTime = 0;
             //处理托管table
 
             doManageTable();
@@ -83,17 +85,83 @@ public class MemoryDBMonitor {
         }
 
         //判断DB是否恢复
-        if (dbCrash&&lastDbCrashRecoverTime>0&&(System.currentTimeMillis()-lastDbCrashRecoverTime)>=DB_CRASH_RECOVER_TIME){
+        if (dbCrash && lastDbCrashRecoverTime > 0 && (System.currentTimeMillis() - lastDbCrashRecoverTime) >= DB_CRASH_RECOVER_TIME) {
             handleDbRecover();
             System.out.println(" db  recover");
         }
 
     }
 
-    private static void handleDbRecover() {
+    public static void setSqlQueuesizeHighThreshold(int highThreshold) {
+        SQL_QUEUESIZE_HIGH_THRESHOLD = highThreshold;
     }
 
-    private static void doManageTable() {
+    public static void setSqlQueuesizeLowThreshold(int lowThreshold) {
+        SQL_QUEUESIZE_LOW_THRESHOLD = lowThreshold;
+    }
+
+    public static void setSqlQueuesizeLastTime(long lastTime) {
+        SQL_QUEUESIZE_LAST_TIME = lastTime;
+    }
+
+    public static void setDbCrashRecoverTime(long recoverTime) {
+        DB_CRASH_RECOVER_TIME = recoverTime;
+    }
+
+
+    public static void setDbCrash(boolean isCrash) {
+        if (isCrash) {
+            dbCrash = true;
+            lastDbCrashRecoverTime = 0L;
+        } else {
+            lastDbCrashRecoverTime = System.currentTimeMillis();
+        }
+
+    }
+
+    /**
+     * 处理DB恢复了
+     */
+    private static void handleDbRecover() {
+        dbCrash = false;
+        lastDbCrashRecoverTime = 0L;
+        doManageTable();
+    }
+
+    /**
+     * 托管自己
+     */
+    private static void doManageTable(MemoryTable table) {
+        managedTable.put(table, OBJECT);
+        if (isHealth()) {
+            doManageTable();
+        }
+    }
+
+    /**
+     * 内存库是否健康
+     *
+     * @return
+     */
+    private static boolean isHealth() {
+        return isHealth && !dbCrash;
+    }
+
+    /**
+     * 处理托管table
+     */
+    public static void doManageTable() {
+        if (isHealth() && managedTable.size() > 0) {
+            Set<MemoryTable> keySet = new HashSet<>(managedTable.keySet());
+            for (MemoryTable table : keySet) {
+                //flush清理操作
+                table.flushDeleteOp();
+                //移除自身
+                managedTable.remove(table);
+            }
+
+        }
+
     }
 
 
